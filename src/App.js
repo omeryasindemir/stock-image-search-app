@@ -1,23 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import axios from 'axios';
 
 function App() {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+
+  const searchImages = async () => {
+    try {
+      const response = await axios.get(
+        `https://api.pexels.com/v1/search?query=${query}`,
+        {
+          headers: {
+            Authorization: 'd2C7r2kVE4KsTsOi6DCALaZGU8nfedRXa7lB9jP1oaLiOxUIVES0TIVg',
+          },
+        }
+      );
+
+      setResults(response.data.photos);
+    } catch (error) {
+      console.error('API request error:', error);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div class="search__inps">
+      <input class="input__plc"
+        type="text"
+        placeholder="Search for images..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      <button class="input__btn" onClick={searchImages}>Search</button>
+      <div>
+        {results.map((photo) => (
+          <img class="images" key={photo.id} src={photo.src.small} alt={photo.url} />
+        ))}
+      </div>
     </div>
   );
 }
